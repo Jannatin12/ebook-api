@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Author;
+use JWTAuth;
 
 class AuthorController extends Controller
 {
@@ -22,6 +23,10 @@ class AuthorController extends Controller
             return response(["message" => "Data not found", "data" => null], 404);
         }
 
+    }
+
+    public function _construct(){
+        $this->middleware("auth:api");
     }
 
     /**
@@ -78,8 +83,10 @@ class AuthorController extends Controller
             $author->hp = $request->hp;
 
             $author->save();
+            return response(["message" => "Update data succes", "data" => $author], 200);
+        } else {
+            return response(["message" => "Update data failed", "data" => null], 406);
         }
-        return $author;
     }
 
     /**
@@ -93,6 +100,9 @@ class AuthorController extends Controller
         $author = Author::find($id);
         if($author) {
             $author->delete();
+            return response([], 204);
+        } else {
+            return response(["message" => "Delete data failed", "data" => null], 406);
         }
     }
 }
